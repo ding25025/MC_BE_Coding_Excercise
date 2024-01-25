@@ -43,12 +43,21 @@ def createTask():
       - name: taskname
         in: body
         required: true
-
+        schema:
+          id: taskname
+          required:
+            - name
+          properties:
+            name:
+              type: string
+              description: 任務名稱
     responses:
       401:
         description: Unauthorized error
       201:
         description: Create Success
+        examples:
+          taskname : {"name": "taskname"}
     """
     content = request.data.decode()
     data = json.loads(content)

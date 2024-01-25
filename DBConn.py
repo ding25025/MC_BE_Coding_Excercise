@@ -1,4 +1,3 @@
-import threading
 import pymysql
 
 
@@ -37,16 +36,11 @@ def query_sql(sql, val):
     """query sql function."""
     try:
         connection = get_db()
-        lock = threading.Lock()
         cursor = get_cursor(connection)
         if val == "":
-            lock.acquire()
             cursor.execute(sql)
-            lock.release()
         else:
-            lock.acquire()
             cursor.execute(sql, val)
-            lock.release()
         record = cursor.fetchall()
         cursor.close()
         # connection.close()
@@ -92,12 +86,10 @@ def insert_sql(sql, val):
     """insert sql function."""
     try:
         connection = get_db()
-        lock = threading.Lock()
         cursor = get_cursor(connection)
-        lock.acquire()
         cursor.execute(sql, val)
         connection.commit()
-        lock.release()
+
         print(cursor.lastrowid, ": record inserted.")
 
         # SQL query to retrieve the inserted data
@@ -122,17 +114,19 @@ def update_sql(sql, val):
     """update sql function."""
     try:
         connection = get_db()
-        lock = threading.Lock()
         cursor = get_cursor(connection)
-        lock.acquire()
         cursor.execute(sql, val)
         connection.commit()
-        lock.release()
         print(cursor.rowcount, ": record updated.")
-        record = cursor.rowcount
+        select_query = "SELECT * FROM task WHERE id = %s"
+        print(val[0])
+        select_values = (val[2],)
+        cursor.execute(select_query, select_values)
+        record = cursor.fetchone()
+
         cursor.close()
         # connection.close()
-        # print("目前資料：", record)
+        print("目前資料：", record)
         msg = {"result": record}
 
     except pymysql.Error as error:

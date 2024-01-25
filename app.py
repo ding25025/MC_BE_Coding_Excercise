@@ -13,7 +13,7 @@ swagger_bp = Blueprint(
     template_folder=swagger_ui_path,
 )
 
-app = Flask(__name__, static_url_path="")
+app = Flask(__name__)
 app.config["SWAGGER"] = {
     "title": "MC_BE_Coding_Excercise API",
     "description": "MC_BE_Coding_Excercise API",
