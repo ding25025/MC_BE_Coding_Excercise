@@ -6,8 +6,8 @@ def get_db():
     return pymysql.connect(
         host="localhost",
         port=3306,
-        user="user",
-        password="test",
+        user="root",
+        password="",
         database="task",
         connect_timeout=31536000,
         cursorclass=pymysql.cursors.DictCursor,
@@ -52,10 +52,9 @@ def query_sql(sql, val):
         # connection.close()
         print("目前資料：", record)
         if len(record) > 0:
-            msg = record
+            msg = {"result": record}
         else:
-            msg = record
-
+            msg = {"result": "No Data"}
     except pymysql.Error as error:
         msg = ""
         cursor.close()
@@ -63,6 +62,30 @@ def query_sql(sql, val):
         print(error)
 
     return msg
+
+
+def getTasks():
+    sql = "SELECT * from task"
+
+    return query_sql(sql, "")
+
+
+def insertTaskCmd(name):
+    sql = "INSERT INTO task (name) VALUES (%s)"
+    val = [(name)]
+    return insert_sql(sql, val)
+
+
+def updateTaskCmd(id, name, status):
+    sql = "Update task Set name=%s,status=%s where id=%s"
+    val = (name, status, id)
+    return update_sql(sql, val)
+
+
+def deleteTaskCmd(id):
+    sql = "Delete From task where id=%s"
+    val = [(id)]
+    return update_sql(sql, val)
 
 
 def insert_sql(sql, val):
@@ -76,11 +99,16 @@ def insert_sql(sql, val):
         connection.commit()
         lock.release()
         print(cursor.lastrowid, ": record inserted.")
-        record = cursor.lastrowid
+
+        # SQL query to retrieve the inserted data
+        select_sql = "SELECT * FROM task WHERE id = LAST_INSERT_ID()"
+        # Execute the SELECT query
+        cursor.execute(select_sql)
+        record = cursor.fetchone()
         cursor.close()
         # connection.close()
         # print("目前資料：", record)
-        msg = record
+        msg = {"result": record}
 
     except pymysql.Error as error:
         msg = ""
@@ -105,7 +133,7 @@ def update_sql(sql, val):
         cursor.close()
         # connection.close()
         # print("目前資料：", record)
-        msg = record
+        msg = {"result": record}
 
     except pymysql.Error as error:
         msg = ""

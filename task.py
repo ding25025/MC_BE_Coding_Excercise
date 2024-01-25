@@ -2,12 +2,13 @@
 import json
 import unittest
 from flask import request, Blueprint
+from DBConn import getTasks, insertTaskCmd, updateTaskCmd, deleteTaskCmd
 
 task_bp = Blueprint("task", __name__)
 
 
 # task List
-@task_bp.route("/tasks", methods=["GET"])
+@task_bp.route("", methods=["GET"])
 def taskList():
     """
     Get Task List
@@ -15,75 +16,62 @@ def taskList():
     ---
     tags:
       - Task APIs
-    produces: application/json,
-
     responses:
       401:
         description: 401 error
       200:
         description: Retrieve task list
         examples:
-          task-list:{
-            result:[{"id": 1, "name": "taskname", "status": 0}]
-            }
+          task-list:{result:[{"id": 1,"name":"taskname", "status":0}]}
     """
-    result = ""
+    result = getTasks()
 
     return result
 
 
 # create task
-@task_bp.route("/", methods=["POST"])
+@task_bp.route("", methods=["POST"])
 def createTask():
     """
     create task information
     ---
     tags:
-      - task APIs
-    produces: application/json,
+      - Task APIs
+    summary: Create task
+    description: Create a a task
     parameters:
-    - name: taskname
-      in: body
-      required: true
-      schema:
-        id: taskid
-        required:
-          - name
-        properties:
-          id:
-            type: string
-            description: 任務流水號
-          name:
-            type: string
-            description: 任務名稱
-          status:
-            type: bool
-            description: 任務狀態
+      - name: taskname
+        in: body
+        required: true
+
     responses:
       401:
         description: Unauthorized error
       201:
         description: Create Success
-
     """
     content = request.data.decode()
     data = json.loads(content)
     print(data)
 
-    result = insertTask(data["name"])
+    if "name" not in data:
+        msg = {"result": "Input Error!"}
+        return msg
+    result = insertTaskCmd(data["name"])
 
     return result
 
 
-@task_bp.route("/", methods=["PUT"])
+@task_bp.route("/<int:id>", methods=["PUT"])
 # update task
-def updateTask():
+def updateTask(id):
     """
     update task
     ---
     tags:
-      - User APIs
-    produces: application/json,
+      - Task APIs
+    summary: Update task by ID
+    description: Update a task
     parameters:
     - name: task
       in: body
@@ -93,74 +81,61 @@ def updateTask():
         required:
           - name
           - status
-
         properties:
+          id:
+            type: integer
+            description: 任務序號
           name:
             type: string
-            description: name
+            description: 任務名稱
           status:
-            type: bool
-            description: O:Incomplete 1:Complete
-
-
+            type: boolean
+            description: 任務狀態 O:Incomplete 1:Complete
     responses:
-      401:
+      '401':
         description: Unauthorized error
-      200:
+      '200':
         description: Update Success
         examples:
           task : {"id": 1, "name": "taskname", "status": 1}
     """
     content = request.data.decode()
     data = json.loads(content)
-
-    if "name" not in data:
-        msg = msgresult(False, str(errorCode["1007"]) + "=>Email ", "1007", "", "")
+    print(data)
+    if id is None or "name" not in data or "status" not in data:
+        msg = {"result": "Input Error!"}
         return msg
+    result = updateTaskCmd(id, data["name"], data["status"])
 
-    userInfo = result["result"]
-    print(userInfo)
-    if len(userInfo) > 0:
-        return result
-    else:
-        msg = msgresult(False, str(errorCode["1008"]), "1008", "", "")
-        return msg
+    return result
 
 
 # delete task
-@task_bp.route("/", methods=["Delete"])
-def deleteTask():
+@task_bp.route("/<int:id>", methods=["Delete"])
+def deleteTask(id):
     """
     Delete Task
     ---
     tags:
-      - Delete Task APIs
-    produces: application/json,
+      - Task APIs
+    summary: Find task by ID
+    description: Delete a task
     parameters:
-    - name: id
-      in: query
-      type: string
-      required: true
+      - name: id
+        in: path
+        required: true
+        schema:
+            type: integer
+            format: int64
     responses:
-      401:
+      '401':
         description: Unauthorized error
-      200:
+      '200':
         description: Delete Task
-        examples:
-          task's id: [{"id":1}]
     """
-    id = request.args.get("id")
-    print(id)
-
     if id is None:
-        msg = msgresult(
-            False,
-            str(Errorcode["1007"]) + "=>Invalid id ",
-            "1007",
-            "",
-            "",
-        )
+        msg = {"result": "Input Error!"}
         return msg
     else:
-        result = deleteTaskExcute(id)
+        result = deleteTaskCmd(id)
         return result
