@@ -1,15 +1,15 @@
 """task function."""
 import json
-import unittest
+import logging
 from flask import request, Blueprint
-from DBConn import getTasks, insertTaskCmd, updateTaskCmd, deleteTaskCmd
+from src.dbConn import task_list, insert_task_cmd, update_task_cmd, delete_task_cmd
 
 task_bp = Blueprint("task", __name__)
 
 
 # task List
 @task_bp.route("", methods=["GET"])
-def taskList():
+def get_task_list():
     """
     Get Task List
     Retrieve Task list
@@ -24,14 +24,14 @@ def taskList():
         examples:
           task-list:{result:[{"id": 1,"name":"taskname", "status":0}]}
     """
-    result = getTasks()
+    result = task_list()
 
     return result
 
 
 # create task
 @task_bp.route("", methods=["POST"])
-def createTask():
+def create_task():
     """
     create task information
     ---
@@ -66,14 +66,14 @@ def createTask():
     if "name" not in data:
         msg = {"result": "Input Error!"}
         return msg
-    result = insertTaskCmd(data["name"])
+    result = insert_task_cmd(data["name"])
 
     return result
 
 
-@task_bp.route("/<int:id>", methods=["PUT"])
 # update task
-def updateTask(id):
+@task_bp.route("/<int:id>", methods=["PUT"])
+def update_task(id):
     """
     update task
     ---
@@ -114,14 +114,14 @@ def updateTask(id):
     if id is None or "name" not in data or "status" not in data:
         msg = {"result": "Input Error!"}
         return msg
-    result = updateTaskCmd(id, data["name"], data["status"])
+    result = update_task_cmd(id, data["name"], data["status"])
 
     return result
 
 
 # delete task
 @task_bp.route("/<int:id>", methods=["Delete"])
-def deleteTask(id):
+def delete_task(id):
     """
     Delete Task
     ---
@@ -142,9 +142,13 @@ def deleteTask(id):
       '200':
         description: Delete Task
     """
-    if id is None:
-        msg = {"result": "Input Error!"}
-        return msg
-    else:
-        result = deleteTaskCmd(id)
-        return result
+    try:
+        if id is None:
+            msg = {"result": "Input Error!"}
+            return msg
+        else:
+            result = delete_task_cmd(id)
+            return result
+    except Exception as e:
+        logging.error(f"An error occurred: {str(e)}")
+        return {"result": "An unexpected error occurred"}

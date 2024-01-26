@@ -3,7 +3,7 @@ from flask import Flask
 from flask import Blueprint
 from flasgger import Swagger
 from swagger_ui_bundle import swagger_ui_path
-from task import task_bp
+from src.task import task_bp
 
 swagger_bp = Blueprint(
     "swagger_ui",

@@ -2,7 +2,7 @@ FROM python
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
 # RUN apt-get update
 
