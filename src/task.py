@@ -1,4 +1,4 @@
-"""task function."""
+"""task function"""
 import json
 import logging
 from flask import request, Blueprint
@@ -149,6 +149,6 @@ def delete_task(id):
         else:
             result = delete_task_cmd(id)
             return result
-    except Exception as e:
-        logging.error(f"An error occurred: {str(e)}")
+    except ImportError:
+        logging.error("An unexpected error occurred")
         return {"result": "An unexpected error occurred"}

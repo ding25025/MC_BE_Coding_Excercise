@@ -1,4 +1,4 @@
-"""app function."""
+"""app function"""
 from flask import Flask
 from flask import Blueprint
 from flasgger import Swagger
