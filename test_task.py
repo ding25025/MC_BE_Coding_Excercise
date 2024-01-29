@@ -17,7 +17,7 @@ class TestTaskEndpoint(unittest.TestCase):
     def test_create_task_success(self, mock_create_task_cmd):
         """Create Task Testing"""
 
-        result = {"result": "Task created successfully"}
+        result = {"result": {"id": 19, "name": "任務名稱", "status": 0}}
 
         mock_create_task_cmd.return_value = result
 
@@ -29,7 +29,7 @@ class TestTaskEndpoint(unittest.TestCase):
 
         # Assert the status code and response
         self.assertEqual(response.status_code, 200)
-        # self.assertEqual(json.loads(response.data), result)
+        self.assertEqual(json.loads(response.data), result)
 
     @patch("src.task.create_task")
     def test_create_task_not_success(self, mock_create_task_cmd):

@@ -4,7 +4,7 @@
 
 http://127.0.0.1:5002/apidocs
 
-## How to run api
+## How to run task api
 ```
 python3 app.py
 
