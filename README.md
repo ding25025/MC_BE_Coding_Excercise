@@ -1,17 +1,22 @@
 # Task API Practice
 
-## api document
+## How to open api document
 
 http://127.0.0.1:5002/apidocs
 
-## build docker image
+## How to run api
+```
+python3 app.py
+
+```
+## How to build docker image
 
 ```
 docker image build -t taskapi_test .
 
 ```
  
-## run docker image
+## How to run docker image
 
 ```
 docker run --restart=always -p 5002:5002  --network=host -t taskapi_test

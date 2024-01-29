@@ -19,11 +19,10 @@ def get_cursor(connection):
     """get db cursor."""
     try:
         print("connection==")
-        # connection = get_db()
         connection.ping(True)
-        db_Info = connection.get_host_info()
+        db_info = connection.get_host_info()
 
-        print("DB Version:" + db_Info)
+        print("DB Version:" + db_info)
 
     except pymysql.OperationalError as error:
         connection.ping(True)
