@@ -1,6 +1,6 @@
 flasgger==0.9.7.1
 Flask==2.2.5
 idna==3.7
-PyMySQL==1.1.0
+PyMySQL==1.1.1
 swagger-ui-bundle==0.0.9
 Werkzeug==3.0.3
